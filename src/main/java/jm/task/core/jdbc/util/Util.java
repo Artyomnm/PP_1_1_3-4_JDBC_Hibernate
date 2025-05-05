@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
-    // реализуйте настройку соеденения с БД
 
     private static final String url = "jdbc:mysql://localhost:3306/mysql";
     private static final String user = "root";
@@ -19,6 +18,7 @@ public class Util {
             System.out.println("Соединение установлено");
         } catch (SQLException e) {
             System.err.println("Ошибка при подключении к базе данных");
+            e.printStackTrace();
         }
         return connection;
     }

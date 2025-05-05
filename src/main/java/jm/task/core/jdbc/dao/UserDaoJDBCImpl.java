@@ -9,42 +9,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    Connection connection;
+    private Connection connection = Util.getConnection();
 
     public UserDaoJDBCImpl() {
-        this.connection = Util.getConnection();
+
     }
 
     @Override
     public void createUsersTable() {
-        String sqlCommand = "CREATE TABLE IF NOT EXISTS User (" +
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS User (" +
                 "Id INT PRIMARY KEY AUTO_INCREMENT, " +
                 "Name VARCHAR(40), " +
                 "LastName VARCHAR(40), " +
-                "Age INT)";
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sqlCommand);
+                "Age INT)");
             System.out.println("Таблица User создана");
         } catch (SQLException e) {
             System.out.println("Ошибка при создании таблицы User");
+            e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        String sqlCommand = "DROP TABLE IF EXISTS User";
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sqlCommand);
+            statement.executeUpdate("DROP TABLE IF EXISTS User");
             System.out.println("Таблица User удалена");
         } catch (SQLException e) {
             System.out.println("Ошибка при удалении таблицы User");
+            e.printStackTrace();
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        String sqlCommand = "INSERT INTO User (Name, Lastname, Age) VALUES (?, ?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO User " +
+            "(Name, Lastname, Age) VALUES (?, ?, ?)")) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -52,26 +52,26 @@ public class UserDaoJDBCImpl implements UserDao {
             System.out.println("User с именем - " + name + " добавлен в базу данных");
         } catch (SQLException e) {
             System.out.println("User с именем - " + name + " НЕ добавлен в базу данных");
+            e.printStackTrace();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        String sqlCommand = "DELETE FROM User WHERE Id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM User WHERE Id = ?")) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
             System.out.println("User c id = " + id + " удален");
         } catch (SQLException e) {
             System.out.println("Не получилось удалить User c id = " + id);
+            e.printStackTrace();
         }
     }
 
     public List<User> getAllUsers() {
-        String sqlCommand = "SELECT * FROM User";
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sqlCommand);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM User");
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
@@ -84,18 +84,19 @@ public class UserDaoJDBCImpl implements UserDao {
             users.toString();
         } catch (SQLException e) {
             System.out.println("Ошибка при создании списка User");
+            e.printStackTrace();
         }
         return users;
     }
 
     @Override
     public void cleanUsersTable() {
-        String sqlCommand = "TRUNCATE TABLE User";
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sqlCommand);
+            statement.executeUpdate("TRUNCATE TABLE User");
             System.out.println("Таблица User очищена");
         } catch (SQLException e) {
             System.out.println("Ошибка при очищении таблицы User");
+            e.printStackTrace();
         }
     }
 }
