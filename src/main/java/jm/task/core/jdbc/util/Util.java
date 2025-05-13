@@ -28,19 +28,26 @@ public class Util {
         return connection;
     }
 
+
+    private static SessionFactory sessionFactory;
     public static SessionFactory getSessionFactory() {
-        Configuration configuration = new Configuration();
-        configuration
-                .addAnnotatedClass(User.class)
-                .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
-                .setProperty("hibernate.connection.url", url)
-                .setProperty("hibernate.connection.username", user)
-                .setProperty("hibernate.connection.password", password)
-                .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
-                .setProperty("hibernate.show_sql", "true")
-                .setProperty("hibernate.hbm2ddl.auto", "create")
-                .setProperty("current_session_context_class", "thread");
-        System.out.println("Соединение Hibernate установлено");
-        return configuration.buildSessionFactory();
+        if (sessionFactory == null) {
+            try {
+                sessionFactory = new Configuration()
+                        .addAnnotatedClass(User.class)
+                        .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
+                        .setProperty("hibernate.connection.url", url)
+                        .setProperty("hibernate.connection.username", user)
+                        .setProperty("hibernate.connection.password", password)
+                        .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                        .setProperty("hibernate.show_sql", "true")
+                        .setProperty("hibernate.hbm2ddl.auto", "create")
+                        .setProperty("current_session_context_class", "thread")
+                        .buildSessionFactory();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return sessionFactory;
     }
 }
