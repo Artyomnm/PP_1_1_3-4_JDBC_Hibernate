@@ -12,14 +12,14 @@ import java.sql.SQLException;
 
 public class Util {
 
-    private static final String url = "jdbc:mysql://localhost:3306/mysql";
-    private static final String user = "root";
-    private static final String password = "root";
+    private static final String URL = "jdbc:mysql://localhost:3306/mysql";
+    private static final String USER = "root";
+    private static final String PASSWORD = "root";
 
     public static Connection getConnection() {
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Соединение установлено");
         } catch (SQLException e) {
             System.err.println("Ошибка при подключении к базе данных");
@@ -36,9 +36,9 @@ public class Util {
                 sessionFactory = new Configuration()
                         .addAnnotatedClass(User.class)
                         .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
-                        .setProperty("hibernate.connection.url", url)
-                        .setProperty("hibernate.connection.username", user)
-                        .setProperty("hibernate.connection.password", password)
+                        .setProperty("hibernate.connection.url", URL)
+                        .setProperty("hibernate.connection.username", USER)
+                        .setProperty("hibernate.connection.password", PASSWORD)
                         .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
                         .setProperty("hibernate.show_sql", "true")
                         .setProperty("hibernate.hbm2ddl.auto", "create")
